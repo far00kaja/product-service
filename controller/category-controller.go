@@ -9,7 +9,7 @@ import (
 
 type CategoryController interface {
 	FindAll() []entity.Category
-	Save(ctx *gin.Context) error
+	Save(ctx *gin.Context) (entity.Category, error)
 }
 
 type controller struct {
@@ -25,11 +25,12 @@ func New(service service.CategoryService) CategoryController {
 func (c *controller) FindAll() []entity.Category {
 	return c.service.FindAll()
 }
-func (c *controller) Save(ctx *gin.Context) error {
+func (c *controller) Save(ctx *gin.Context) (entity.Category, error) {
 	var category entity.Category
 	err := ctx.ShouldBindJSON(&category)
 	if err != nil {
-		return err
+		return category, err
 	}
-	return nil
+	return c.service.Save(category), nil
+
 }
